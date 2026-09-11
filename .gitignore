@@ -1,0 +1,24 @@
+# This repo is docs + releases ONLY. Source code must never be committed here;
+# the no-source-guard workflow fails CI if any of these appear.
+*.kt
+*.kts
+*.java
+*.swift
+*.gradle
+*.gradle.kts
+gradle/
+gradlew
+gradlew.bat
+settings.gradle.kts
+build.gradle.kts
+composeApp/
+iosApp/
+src/
+# Release binaries are attached as GitHub Release assets, never committed.
+*.dmg
+*.msi
+*.deb
+*.apk
+*.aab
+*.tar.gz
+*.zip

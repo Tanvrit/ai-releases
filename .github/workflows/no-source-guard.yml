@@ -1,0 +1,33 @@
+# Keeps this repo docs-and-releases only. Fails if any tracked file looks like
+# source code or a committed binary — those belong in the private app repo and
+# on the Releases page respectively, never in git here.
+name: No source code
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  guard:
+    # Self-hosted only — org policy 2026-09-11. This repo is public, so until the
+    # tanvrit runner group is opened to public repos this job queues rather than
+    # runs; that is acceptable for a guard that only fires on a stray source
+    # commit. Do NOT switch it to a GitHub-hosted image.
+    runs-on:
+      group: tanvrit
+      labels: [self-hosted, Linux, X64]
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fail on any source or binary file
+        shell: bash
+        run: |
+          bad=$(git ls-files | grep -iE '\.(kt|kts|java|swift|gradle)$|(^|/)(src|composeApp|iosApp|gradle)/|\.(dmg|msi|deb|apk|aab|tar\.gz|zip)$' || true)
+          if [ -n "$bad" ]; then
+            echo "::error::Source or binary files committed to the releases repo:"; echo "$bad"
+            echo "This repo is docs + Homebrew formula only. Code lives in the private app repo; binaries are Release assets."
+            exit 1
+          fi
+          echo "OK — docs only, no source or committed binaries."
