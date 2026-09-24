@@ -15,6 +15,9 @@ jobs:
     # tanvrit runner group is opened to public repos this job queues rather than
     # runs; that is acceptable for a guard that only fires on a stray source
     # commit. Do NOT switch it to a GitHub-hosted image.
+    # Never run fork-PR code on self-hosted runners (Parmar runs jobs as root).
+    # push / workflow_dispatch are unaffected; same-repo PRs still run.
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on:
       group: tanvrit
       labels: [self-hosted, Linux, X64]
